@@ -35,14 +35,20 @@ window.countNRooksSolutions = function(n) {
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var b = new Board({'n' : n});
+  var available = new Array(n);
 
   findRow(0);
 
   function findRow (row) {
     for (var i = 0; i < n; i++) {
+      if (available[i]) {
+        continue;
+      }
       b.togglePiece(row, i);
+      available[i] = !available[i];
       if (b.hasAnyQueenConflictsOn(row, i)) {
         b.togglePiece(row, i);
+        available[i] = !available[i];
         continue;
       } else {
         if (row < n - 1) {
@@ -53,6 +59,7 @@ window.findNQueensSolution = function(n) {
           }
           // when all subtree decisions are false
           b.togglePiece(row, i);
+          available[i] = !available[i];
         } else {
           // deepest level of subtree is true
           return true;
@@ -75,13 +82,20 @@ window.countNQueensSolutions = function(n) {
   }
   var solutionCount = 0; //fixme
   var b = new Board({'n' : n});
+  var available = new Array(n);
 
   findRow(0);
 
-  function findRow (row) {
+  function findRow (row, lastCol) {
     for (var i = 0; i < n; i++) {
+      if (available[i] || i === lastCol - 1 || i === lastCol + 1) {
+        continue;
+      }
       b.togglePiece(row, i);
-      if (!b.hasAnyQueenConflictsOn(row, i)) {
+      available[i] = !available[i];
+
+      //if (!b.hasAnyQueenConflictsOn(row, i)) {
+      if (!(b.hasMajorDiagonalConflictAt(b._getFirstRowColumnIndexForMajorDiagonalOn(row, i)) || b.hasMinorDiagonalConflictAt(b._getFirstRowColumnIndexForMinorDiagonalOn(row, i)))) {
         if (row < n - 1) {
           findRow(row + 1);
         } else {
@@ -90,6 +104,7 @@ window.countNQueensSolutions = function(n) {
         }
       }
       b.togglePiece(row, i);
+      available[i] = !available[i];
     }
   }
 
