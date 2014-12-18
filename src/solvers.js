@@ -81,33 +81,79 @@ window.countNQueensSolutions = function(n) {
     return 1;
   }
   var solutionCount = 0; //fixme
-  var b = new Board({'n' : n});
-  var available = new Array(n);
+  var b = [];
+  for (var i = 0; i < n; i++) {
+    b.push([]);
+  }
+  var availCol = {};
+  var availLD = {};
+  var availRD = {};
 
   findRow(0);
 
   function findRow (row, lastCol) {
     for (var i = 0; i < n; i++) {
-      if (available[i] || i === lastCol - 1 || i === lastCol + 1) {
+      if (availCol[i] || i === lastCol - 1 || i === lastCol + 1 || availLD[i + row] || availRD[i - row]) {
         continue;
       }
-      b.togglePiece(row, i);
-      available[i] = !available[i];
 
-      //if (!b.hasAnyQueenConflictsOn(row, i)) {
-      if (!(b.hasMajorDiagonalConflictAt(b._getFirstRowColumnIndexForMajorDiagonalOn(row, i)) || b.hasMinorDiagonalConflictAt(b._getFirstRowColumnIndexForMinorDiagonalOn(row, i)))) {
-        if (row < n - 1) {
-          findRow(row + 1, i);
-        } else {
-          // deepest level of subtree is true
-          solutionCount++;
-        }
+      b[row][i] = true;
+      availCol[i] = availLD[i + row] = availRD[i - row] = true;
+
+      if (row < n - 1) {
+        findRow(row + 1, i);
+      } else {
+        // deepest level of subtree is true
+        solutionCount++;
       }
-      b.togglePiece(row, i);
-      available[i] = !available[i];
+      b[row][i] = false;
+      availCol[i] = availLD[i + row] = availRD[i - row] = false;
     }
   }
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
+window.countNQueensBitwise = function (n) {
+  if (n === 0){
+    return 1;
+  }
+  var solutionCount = 0;
+  var b = new Array(n);
+  console.log('solution for', n);
+  findRow(0);
+
+  function findRow (row) {
+    console.log('finding', row);
+    var val;
+    var LD;
+    var RD;
+    var skip;
+    b[row] = 1;
+    for (var i = 0; i < n; i++) {
+      skip = false;
+      val = LD = RD = b[row];
+      for (var j = row - 1; j >= 0; j--) {
+        LD = LD >> 1;
+        RD = RD << 1;
+        if (b[j] === val || b[j] === LD || b[j] === RD) {
+          skip = true;
+          break;
+        }
+      }
+      if (skip === true) {
+        continue;
+      }
+      if (row < n - 1) {
+        findRow(row + 1);
+      } else {
+        console.log('found', row, ':', i);
+        solutionCount++;
+      }
+      b[row] = b[row] << 1;
+    }
+  }
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  return solutionCount;
+}
