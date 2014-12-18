@@ -97,7 +97,7 @@ window.countNQueensSolutions = function(n) {
       //if (!b.hasAnyQueenConflictsOn(row, i)) {
       if (!(b.hasMajorDiagonalConflictAt(b._getFirstRowColumnIndexForMajorDiagonalOn(row, i)) || b.hasMinorDiagonalConflictAt(b._getFirstRowColumnIndexForMinorDiagonalOn(row, i)))) {
         if (row < n - 1) {
-          findRow(row + 1);
+          findRow(row + 1, i);
         } else {
           // deepest level of subtree is true
           solutionCount++;
