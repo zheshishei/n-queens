@@ -81,37 +81,30 @@ window.countNQueensSolutions = function(n) {
     return 1;
   }
   var solutionCount = 0; //fixme
-  var b = [];
-  for (var i = 0; i < n; i++) {
-    b.push([]);
-  }
-  var availCol = {};
-  var availLD = {};
-  var availRD = {};
+
+  var availCol = [];
+  var availLD = [];
+  var availRD = [];
 
   findRow(0);
 
-  function findRow (row, lastCol) {
+  function findRow (row) {
     for (var i = 0; i < n; i++) {
-      if (availCol[i] || i === lastCol - 1 || i === lastCol + 1 || availLD[i + row] || availRD[i - row]) {
-        continue;
-      }
+      if (!(availCol[i] || availLD[i + row] || availRD[i - row])) {
+       availCol[i] = availLD[i + row] = availRD[i - row] = true;
 
-      b[row][i] = true;
-      availCol[i] = availLD[i + row] = availRD[i - row] = true;
-
-      if (row < n - 1) {
-        findRow(row + 1, i);
-      } else {
-        // deepest level of subtree is true
-        solutionCount++;
+       if (row < n - 1) {
+         findRow(row + 1);
+       } else {
+         // deepest level of subtree is true
+         solutionCount++;
+       }
+       availCol[i] = availLD[i + row] = availRD[i - row] = false;
       }
-      b[row][i] = false;
-      availCol[i] = availLD[i + row] = availRD[i - row] = false;
     }
   }
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  //console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
 
@@ -119,15 +112,16 @@ window.countNQueensBitwise = function (n) {
   if (n === 0){
     return 1;
   }
-  var solutionCount = 0, availCol;
+  var solutionCount = 0, availCol, availLD, availRD;
   var b = new Array(n);
+
   findRow(0);
 
   function findRow (row) {
-    var LD, RD, skip;
+    var max = 1 << n, LD, RD, skip;
     b[row] = 1;
 
-    for (var i = 0; i < n; i++) {
+    while(b[row] < max) {
       skip = false;
       LD = b[row];
       RD = b[row];
@@ -151,29 +145,29 @@ window.countNQueensBitwise = function (n) {
   }
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
-}
+};
 
 window.countNQueensBitwisePaper = function (n) {
   if(n === 0) {
     return 1;
   }
-  var all = 2 * n - 1;
-  var count = 0;
+  var all = (1 << n) - 1;
+  var solutionCount = 0;
 
   i(0,0,0);
 
   function i (ld, cols, rd) {
     if (cols === all) {
-      count++;
-      return;
-    }
-    var poss = ~(ld|cols|rd) & all;
-    while (poss) {
-      var bit = poss & -poss;
-      poss -= bit;
-      i((ld|bit)<<1, cols|bit, (rd|bit)>>1);
+      solutionCount++;
+    } else {
+     var poss = ~(ld | cols | rd) & all;
+     while (poss) {
+       var bit = poss & -poss;
+       i( (ld|bit) << 1, (cols|bit) , (rd|bit) >> 1);
+       poss -= bit;
+     }
     }
   }
-  console.log('Number of solutions for ' + n + ' queens:', count);
-  return count;
+  //console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  return solutionCount;
 };
