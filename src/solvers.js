@@ -119,37 +119,33 @@ window.countNQueensBitwise = function (n) {
   if (n === 0){
     return 1;
   }
-  var solutionCount = 0;
+  var solutionCount = 0, availCol;
   var b = new Array(n);
-  console.log('solution for', n);
   findRow(0);
 
   function findRow (row) {
-    console.log('finding', row);
-    var val;
-    var LD;
-    var RD;
-    var skip;
+    var LD, RD, skip;
     b[row] = 1;
+
     for (var i = 0; i < n; i++) {
       skip = false;
-      val = LD = RD = b[row];
+      LD = b[row];
+      RD = b[row];
       for (var j = row - 1; j >= 0; j--) {
-        LD = LD >> 1;
+        LD = LD >>> 1;
         RD = RD << 1;
-        if (b[j] === val || b[j] === LD || b[j] === RD) {
+        if() {
+        if (b[j] === b[row] || b[j] === LD || b[j] === RD) {
           skip = true;
           break;
         }
       }
-      if (skip === true) {
-        continue;
-      }
-      if (row < n - 1) {
-        findRow(row + 1);
-      } else {
-        console.log('found', row, ':', i);
-        solutionCount++;
+      if (skip === false) {
+        if (row < n - 1) {
+          findRow(row + 1);
+        } else {
+          solutionCount++;
+        }
       }
       b[row] = b[row] << 1;
     }
