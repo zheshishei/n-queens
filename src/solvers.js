@@ -134,7 +134,6 @@ window.countNQueensBitwise = function (n) {
       for (var j = row - 1; j >= 0; j--) {
         LD = LD >>> 1;
         RD = RD << 1;
-        if() {
         if (b[j] === b[row] || b[j] === LD || b[j] === RD) {
           skip = true;
           break;

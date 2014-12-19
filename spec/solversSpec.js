@@ -82,7 +82,7 @@ describe('solvers', function() {
   describe('countNQueensBitwise()', function() {
 
     it('finds the number of valid solutions for n of 1-8', function() {
-      _.range(0, 9).map(function(n) {
+      _.range(0, 15).map(function(n) {
         var solutionCount = countNQueensBitwise(n);
         var expectedSolutionCount = [1, 1, 0, 0, 2, 10, 4, 40, 92,352,724,2680,14200,73712,365596,2279184,14772512][n];
 
