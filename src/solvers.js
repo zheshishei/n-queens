@@ -152,3 +152,28 @@ window.countNQueensBitwise = function (n) {
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 }
+
+window.countNQueensBitwisePaper = function (n) {
+  if(n === 0) {
+    return 1;
+  }
+  var all = 2 * n - 1;
+  var count = 0;
+
+  i(0,0,0);
+
+  function i (ld, cols, rd) {
+    if (cols === all) {
+      count++;
+      return;
+    }
+    var poss = ~(ld|cols|rd) & all;
+    while (poss) {
+      var bit = poss & -poss;
+      poss -= bit;
+      i((ld|bit)<<1, cols|bit, (rd|bit)>>1);
+    }
+  }
+  console.log('Number of solutions for ' + n + ' queens:', count);
+  return count;
+};
